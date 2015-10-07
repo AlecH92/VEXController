@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.InputDevice;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -20,8 +21,6 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 
 
@@ -54,6 +53,13 @@ public class MainActivity extends ActionBarActivity {
     Button ArmDown;
     Button ClawClose;
     Button ClawOpen;
+    Button ClawHold;
+    int leftX = 0;
+    int leftY = 0;
+    int rightX = 0;
+    int rightY = 0;
+    int rightTrigger = 0;
+    int leftTrigger = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -264,6 +270,17 @@ public class MainActivity extends ActionBarActivity {
                 return false;
             }
         });
+        ClawHold = (Button) findViewById(R.id.ClH);
+        ClawHold.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    sendDataInt(25);
+                    return true;
+                }
+                return false;
+            }
+        });
         ClawClose = (Button) findViewById(R.id.ClC);
         ClawClose.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -319,6 +336,20 @@ public class MainActivity extends ActionBarActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    public boolean dispatchGenericMotionEvent(MotionEvent ev) {
+        if((ev.getSource() & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK && ev.getAction() == MotionEvent.ACTION_MOVE) {
+            final int historySize = ev.getHistorySize();
+            for(int i=0;i<historySize;i++) {
+                processJoystickInput(ev, i);
+            }
+            processJoystickInput(ev, -1);
+            return true;
+        }
+        return super.dispatchGenericMotionEvent(ev);
+    }
+
     private void sendDataByte(byte message) {
         if(enableDataSend) {
             Log.d(TAG, "Send data: " + message);
@@ -377,5 +408,38 @@ public class MainActivity extends ActionBarActivity {
             return false;
         }
         return true;
+    }
+    private void processJoystickInput(MotionEvent event, int historyPos) {
+        InputDevice mInputDevice = event.getDevice();
+        float x = getCenteredAxis(event, mInputDevice, MotionEvent.AXIS_X, historyPos);
+        float x2 = getCenteredAxis(event, mInputDevice, MotionEvent.AXIS_Z, historyPos);
+        float y = getCenteredAxis(event, mInputDevice, MotionEvent.AXIS_Y, historyPos);
+        float y2 = getCenteredAxis(event, mInputDevice, MotionEvent.AXIS_RZ, historyPos);
+        float lt = getCenteredAxis(event, mInputDevice, MotionEvent.AXIS_HAT_Y, historyPos);
+        float rt = getCenteredAxis(event, mInputDevice, MotionEvent.AXIS_HAT_X, historyPos);
+        leftX = (int) ((x2 * 127) + 127);
+        leftY = (int) ((y * -127) + 127);
+        rightX = (int) ((x * 127) + 127);
+        rightY = (int) ((y2 * -127) + 127);
+        leftTrigger = (int) ((lt * -127) + 127);
+        rightTrigger = (int) ((rt * 127) + 127);
+        sendDataInt(255);
+        sendDataInt(leftX);
+        sendDataInt(leftY);
+        sendDataInt(rightX);
+        sendDataInt(rightY);
+        sendDataInt(leftTrigger);
+        sendDataInt(rightTrigger);
+    }
+    private static float getCenteredAxis(MotionEvent event, InputDevice device, int axis, int historyPos) {
+        final InputDevice.MotionRange range = device.getMotionRange(axis, event.getSource());
+        if (range != null) {
+            final float flat = range.getFlat();
+            final float value = historyPos < 0 ? event.getAxisValue(axis):event.getHistoricalAxisValue(axis, historyPos);
+            if (Math.abs(value) > flat) {
+                return value;
+            }
+        }
+        return 0;
     }
 }

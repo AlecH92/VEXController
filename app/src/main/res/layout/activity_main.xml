@@ -19,7 +19,7 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:text="New Button"
+        android:background="@drawable/vexul"
         android:id="@+id/FLe"
         android:layout_above="@+id/CRi"
         android:layout_toLeftOf="@+id/F"
@@ -29,8 +29,8 @@
     <Button
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:text="New Button"
         android:id="@+id/FRi"
+        android:background="@drawable/vexur"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_margin="5dp" />
@@ -39,8 +39,8 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:text="New Button"
         android:id="@+id/RRi"
+        android:background="@drawable/vexdr"
         android:layout_below="@+id/CRi"
         android:layout_alignLeft="@+id/CRi"
         android:layout_alignStart="@+id/CRi"
@@ -50,7 +50,7 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:text="New Button"
+        android:background="@drawable/vexdl"
         android:id="@+id/RLe"
         android:layout_alignTop="@+id/R"
         android:layout_toLeftOf="@+id/R"
@@ -138,9 +138,20 @@
         android:layout_height="60dp"
         android:text="ClO"
         android:id="@+id/ClO"
-        android:layout_alignTop="@+id/ClC"
-        android:layout_alignLeft="@+id/RoRi"
-        android:layout_alignStart="@+id/RoRi" />
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/RoRi"
+        android:layout_toEndOf="@+id/RoRi" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:text="ClH"
+        android:id="@+id/ClH"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/ClO"
+        android:layout_toStartOf="@+id/ClO"
+        android:layout_marginRight="20dp" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
