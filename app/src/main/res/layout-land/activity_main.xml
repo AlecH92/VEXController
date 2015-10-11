@@ -1,0 +1,188 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:id="@+id/content"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:tag="standardLand" tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Disconnected"
+        android:id="@+id/connectionStatus"
+        android:textColor="#ffff0000"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/vexul"
+        android:id="@+id/FLe"
+        android:layout_above="@+id/CRi"
+        android:layout_toLeftOf="@+id/F"
+        android:layout_toStartOf="@+id/F"
+        android:layout_margin="5dp" />
+
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/FRi"
+        android:background="@drawable/vexur"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/RRi"
+        android:background="@drawable/vexdr"
+        android:layout_below="@+id/CRi"
+        android:layout_alignLeft="@+id/CRi"
+        android:layout_alignStart="@+id/CRi"
+        android:layout_margin="5dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/vexdl"
+        android:id="@+id/RLe"
+        android:layout_alignTop="@+id/R"
+        android:layout_toLeftOf="@+id/R"
+        android:layout_toStartOf="@+id/R"
+        android:layout_margin="5dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/F"
+        android:background="@drawable/vexu"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/FRi"
+        android:layout_toStartOf="@+id/FRi"
+        android:layout_margin="5dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/R"
+        android:background="@drawable/vexd"
+        android:layout_below="@+id/CRi"
+        android:layout_toLeftOf="@+id/CRi"
+        android:layout_toStartOf="@+id/CRi"
+        android:layout_margin="5dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/CRi"
+        android:background="@drawable/vexr"
+        android:layout_below="@+id/FRi"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="5dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/CLe"
+        android:background="@drawable/vexl"
+        android:layout_above="@+id/RLe"
+        android:layout_alignLeft="@+id/RLe"
+        android:layout_alignStart="@+id/RLe"
+        android:layout_margin="5dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/RoLe"
+        android:background="@drawable/rotateleft"
+        android:layout_alignTop="@+id/RoRi"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/RoRi"
+        android:background="@drawable/rotateright"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/RoLe"
+        android:layout_toEndOf="@+id/RoLe"
+        android:layout_marginLeft="47dp"
+        android:layout_marginStart="47dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:text="N"
+        android:id="@+id/Neutral"
+        android:layout_above="@+id/connectionStatus"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:text="ClO"
+        android:id="@+id/ClO"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/RoRi"
+        android:layout_toEndOf="@+id/RoRi" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:text="ClH"
+        android:id="@+id/ClH"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/ClO"
+        android:layout_toStartOf="@+id/ClO"
+        android:layout_marginRight="20dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:text="ClC"
+        android:id="@+id/ClC"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:text="arm u"
+        android:id="@+id/ArmU"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:text="Arm d"
+        android:id="@+id/ArmD"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/RoRi"
+        android:layout_alignStart="@+id/RoRi" />
+
+</RelativeLayout>

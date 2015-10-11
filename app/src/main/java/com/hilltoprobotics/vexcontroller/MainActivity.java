@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -16,11 +17,16 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar;
+import com.zerokol.views.JoystickView;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.util.UUID;
 
 
@@ -34,7 +40,6 @@ public class MainActivity extends ActionBarActivity {
 
     static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     String address;
-    boolean clockwise;
     public static boolean enableDataSend;
     public SharedPreferences preferences;
     TextView connectionStatus;
@@ -60,242 +65,344 @@ public class MainActivity extends ActionBarActivity {
     int rightY = 0;
     int rightTrigger = 0;
     int leftTrigger = 0;
+    int clawPower = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        View thisView = findViewById(R.id.content);
+        String tag = String.valueOf(thisView.getTag());
+        Log.d(TAG, tag);
         preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        clockwise = preferences.getBoolean("direction", false);
         mBTAdapter = BluetoothAdapter.getDefaultAdapter();
         connectionStatus = (TextView) findViewById(R.id.connectionStatus);
-        Forward = (Button) findViewById(R.id.F);
-        Forward.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    sendDataInt(1);
-                    return true;
+        if (tag.equals("standardLand")) {
+            Log.d(TAG, "standardLand");
+            Forward = (Button) findViewById(R.id.F);
+            Forward.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        sendDataInt(1);
+                        return true;
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        sendDataInt(9);
+                        return true;
+                    }
+                    return false;
                 }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    sendDataInt(9);
-                    return true;
+            });
+            ForwardRight = (Button) findViewById(R.id.FRi);
+            ForwardRight.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        sendDataInt(8);
+                        return true;
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        sendDataInt(9);
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
-        ForwardRight = (Button) findViewById(R.id.FRi);
-        ForwardRight.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    sendDataInt(8);
-                    return true;
+            });
+            CenterRight = (Button) findViewById(R.id.CRi);
+            CenterRight.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        sendDataInt(10);
+                        return true;
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        sendDataInt(9);
+                        return true;
+                    }
+                    return false;
                 }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    sendDataInt(9);
-                    return true;
+            });
+            ReverseRight = (Button) findViewById(R.id.RRi);
+            ReverseRight.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        sendDataInt(6);
+                        return true;
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        sendDataInt(9);
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
-        CenterRight = (Button) findViewById(R.id.CRi);
-        CenterRight.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    sendDataInt(10);
-                    return true;
+            });
+            Reverse = (Button) findViewById(R.id.R);
+            Reverse.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        sendDataInt(5);
+                        return true;
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        sendDataInt(9);
+                        return true;
+                    }
+                    return false;
                 }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    sendDataInt(9);
-                    return true;
+            });
+            ReverseLeft = (Button) findViewById(R.id.RLe);
+            ReverseLeft.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        sendDataInt(4);
+                        return true;
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        sendDataInt(9);
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
-        ReverseRight = (Button) findViewById(R.id.RRi);
-        ReverseRight.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    sendDataInt(6);
-                    return true;
+            });
+            CenterLeft = (Button) findViewById(R.id.CLe);
+            CenterLeft.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        sendDataInt(11);
+                        return true;
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        sendDataInt(9);
+                        return true;
+                    }
+                    return false;
                 }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    sendDataInt(9);
-                    return true;
+            });
+            ForwardLeft = (Button) findViewById(R.id.FLe);
+            ForwardLeft.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        sendDataInt(2);
+                        return true;
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        sendDataInt(9);
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
-        Reverse = (Button) findViewById(R.id.R);
-        Reverse.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    sendDataInt(5);
-                    return true;
+            });
+            Neutral = (Button) findViewById(R.id.Neutral);
+            Neutral.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    sendDataByte((byte) 9);
                 }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    sendDataInt(9);
-                    return true;
+            });
+            RotateLeft = (Button) findViewById(R.id.RoLe);
+            RotateLeft.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        sendDataInt(7);
+                        return true;
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        sendDataInt(9);
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
-        ReverseLeft = (Button) findViewById(R.id.RLe);
-        ReverseLeft.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    sendDataInt(4);
-                    return true;
+            });
+            RotateRight = (Button) findViewById(R.id.RoRi);
+            RotateRight.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        sendDataInt(3);
+                        return true;
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        sendDataInt(9);
+                        return true;
+                    }
+                    return false;
                 }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    sendDataInt(9);
-                    return true;
+            });
+            ArmUp = (Button) findViewById(R.id.ArmU);
+            ArmUp.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        sendDataInt(12);
+                        return true;
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        sendDataInt(14);
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
-        CenterLeft = (Button) findViewById(R.id.CLe);
-        CenterLeft.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    sendDataInt(11);
-                    return true;
+            });
+            ArmDown = (Button) findViewById(R.id.ArmD);
+            ArmDown.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        sendDataInt(13);
+                        return true;
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        sendDataInt(14);
+                        return true;
+                    }
+                    return false;
                 }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    sendDataInt(9);
-                    return true;
+            });
+            ClawOpen = (Button) findViewById(R.id.ClO);
+            ClawOpen.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        sendDataInt(15);
+                        return true;
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        sendDataInt(17);
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
-        ForwardLeft = (Button) findViewById(R.id.FLe);
-        ForwardLeft.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    sendDataInt(2);
-                    return true;
+            });
+            ClawHold = (Button) findViewById(R.id.ClH);
+            ClawHold.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        sendDataInt(25);
+                        return true;
+                    }
+                    return false;
                 }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    sendDataInt(9);
-                    return true;
+            });
+            ClawClose = (Button) findViewById(R.id.ClC);
+            ClawClose.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        sendDataInt(16);
+                        return true;
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        sendDataInt(17);
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
-        Neutral = (Button) findViewById(R.id.Neutral);
-        Neutral.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                sendDataByte((byte) 9);
-            }
-        });
-        RotateLeft = (Button) findViewById(R.id.RoLe);
-        RotateLeft.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    sendDataInt(7);
-                    return true;
+            });
+        }
+        else if(tag.equals("xlargeLand")) {
+            Log.d(TAG, "xlargeLand");
+            final TextView BatteryVoltage = (TextView) findViewById(R.id.batteryVoltage);
+            Button CloseClaw = (Button) findViewById(R.id.closeClaw);
+            Button OpenClaw = (Button) findViewById(R.id.clawOpen);
+            final SeekBar ArmPosition = (SeekBar) findViewById(R.id.armHeight);
+            CloseClaw.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        clawPower = -63+127;
+                        return true;
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        clawPower = -30+127;
+                        return true;
+                    }
+                    return false;
                 }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    sendDataInt(9);
-                    return true;
+            });
+            OpenClaw.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        clawPower = 63 + 127;
+                        return true;
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        clawPower = 0 + 127;
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
-        RotateRight = (Button) findViewById(R.id.RoRi);
-        RotateRight.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    sendDataInt(3);
-                    return true;
+            });
+            final Handler handler = new Handler();
+            Runnable runnable2 = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if(mBTInputStream != null) {
+                            if (mBTInputStream.available() > 0) {
+                                int value = mBTInputStream.read();
+                                double newvalue = map(value, 0, 255, 0, 8);
+                                DecimalFormat df = new DecimalFormat("#.##");
+                                final String voltage = df.format(newvalue);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        BatteryVoltage.setText("Main Battery: " + voltage + "v");
+                                    }
+                                });
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    handler.postDelayed(this, 750);
                 }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    sendDataInt(9);
-                    return true;
+            };
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    sendDataInt(255);
+                    sendDataInt(leftX);
+                    sendDataInt(leftY);
+                    sendDataInt(rightX);
+                    sendDataInt(rightY);
+                    sendDataInt(ArmPosition.getProgress());
+                    sendDataInt(clawPower);
+                    handler.postDelayed(this, 100);
                 }
-                return false;
-            }
-        });
-        ArmUp = (Button) findViewById(R.id.ArmU);
-        ArmUp.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    sendDataInt(12);
-                    return true;
+            };
+            handler.postDelayed(runnable, 100);
+            handler.postDelayed(runnable2, 750);
+            JoystickView theJoystick = (JoystickView) findViewById(R.id.joystickLeft);
+            theJoystick.setOnJoystickMoveListener(new JoystickView.OnJoystickMoveListener() {
+                @Override
+                public void onValueChanged(int angle, int power, int direction, int xvalue, int yvalue) {
+                    leftX = xvalue;
+                    leftY = yvalue;
                 }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    sendDataInt(14);
-                    return true;
+            }, JoystickView.DEFAULT_LOOP_INTERVAL);
+            JoystickView rightJoystick = (JoystickView) findViewById(R.id.joystickRight);
+            rightJoystick.setOnJoystickMoveListener(new JoystickView.OnJoystickMoveListener() {
+                @Override
+                public void onValueChanged(int angle, int power, int direction, int xvalue, int yvalue) {
+                    rightX = xvalue;
+                    rightY = yvalue;
                 }
-                return false;
-            }
-        });
-        ArmDown = (Button) findViewById(R.id.ArmD);
-        ArmDown.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    sendDataInt(13);
-                    return true;
-                }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    sendDataInt(14);
-                    return true;
-                }
-                return false;
-            }
-        });
-        ClawOpen = (Button) findViewById(R.id.ClO);
-        ClawOpen.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    sendDataInt(15);
-                    return true;
-                }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    sendDataInt(17);
-                    return true;
-                }
-                return false;
-            }
-        });
-        ClawHold = (Button) findViewById(R.id.ClH);
-        ClawHold.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    sendDataInt(25);
-                    return true;
-                }
-                return false;
-            }
-        });
-        ClawClose = (Button) findViewById(R.id.ClC);
-        ClawClose.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    sendDataInt(16);
-                    return true;
-                }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    sendDataInt(17);
-                    return true;
-                }
-                return false;
-            }
-        });
+            }, JoystickView.DEFAULT_LOOP_INTERVAL);
+        }
+    }
+
+    double map(double x, double in_min, double in_max, double out_min, double out_max)
+    {
+        return ((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
     }
 
     @Override
@@ -361,7 +468,7 @@ public class MainActivity extends ActionBarActivity {
     }
     private void sendDataInt(Integer message) {
         if(enableDataSend) {
-            Log.d(TAG, "Send data: " + message);
+            //Log.d(TAG, "Send data: " + message);
             try {
                 mBTOutputStream.write(message);
             } catch (IOException e) {
@@ -404,11 +511,13 @@ public class MainActivity extends ActionBarActivity {
         try {
             mBTOutputStream = mBTSocket.getOutputStream();
             mBTInputStream  = mBTSocket.getInputStream();
+            //beginListenForData();
         } catch (Exception e) {
             return false;
         }
         return true;
     }
+
     private void processJoystickInput(MotionEvent event, int historyPos) {
         InputDevice mInputDevice = event.getDevice();
         float x = getCenteredAxis(event, mInputDevice, MotionEvent.AXIS_X, historyPos);
@@ -431,6 +540,7 @@ public class MainActivity extends ActionBarActivity {
         sendDataInt(leftTrigger);
         sendDataInt(rightTrigger);
     }
+
     private static float getCenteredAxis(MotionEvent event, InputDevice device, int axis, int historyPos) {
         final InputDevice.MotionRange range = device.getMotionRange(axis, event.getSource());
         if (range != null) {

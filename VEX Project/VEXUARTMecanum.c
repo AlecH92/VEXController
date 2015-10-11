@@ -98,19 +98,26 @@ task pidController() {
 /* --------------------------- PID END --------------------------- */
 
 int rcvChar;
+long lastTime = 0;
 
 task main() {
 	pidRequestedValue = 0;
 	startTask(pidController);
 	while (true) {
 		batteryv = nImmediateBatteryLevel;
-		//map(batteryv, 0, 8000, 0, 255);
-		//sendChar(uartOne, batteryv);
     rcvChar = getChar(uartOne);
     if (rcvChar == -1) {
       wait1Msec(2);
       continue;
     }
+		else { //if we got something, and it's been 1s since last battery update, send update
+			if(nSysTime - lastTime > 1000) {
+				batteryv = map(batteryv, 0, 8000, 0, 255);
+				sendChar(uartOne, batteryv);
+				lastTime = nSysTime;
+			}
+		}
+
     if(rcvChar == 1) { //forward
     	drive(127,0,0);
     }
@@ -195,26 +202,26 @@ task main() {
       	wait1Msec(2);
       	rcvChar = getChar(uartOne);
     	}
-    	btx = rcvChar;
+    	btx = map(rcvChar,0,200,-127,127);
     	rcvChar = getChar(uartOne);
     	while(rcvChar == -1) {
       	wait1Msec(2);
       	rcvChar = getChar(uartOne);
     	}
-    	bty = rcvChar;
+    	bty = map(rcvChar,0,200,127,-127);
     	rcvChar = getChar(uartOne);
     	while(rcvChar == -1) {
       	wait1Msec(2);
       	rcvChar = getChar(uartOne);
     	}
-    	btx2 = rcvChar;
+    	btx2 = map(rcvChar,0,200,-127,127);
     	rcvChar = getChar(uartOne);
     	while(rcvChar == -1) {
       	wait1Msec(2);
       	rcvChar = getChar(uartOne);
     	}
-    	bty2 = rcvChar;
-    	drive(bty,btx,btx2);
+    	bty2 = map(rcvChar,0,200,127,-127);
+    	drive(bty,btx2,btx);
     	rcvChar = getChar(uartOne);
     	while(rcvChar == -1) {
       	wait1Msec(2);
@@ -227,8 +234,9 @@ task main() {
       	rcvChar = getChar(uartOne);
     	}
     	int clawValue = rcvChar;
+    	clawValue = map(clawValue,0,254,-127,127);
     	motor[theClaw] = clawValue;
-    	motor[theArm] = armValue;
+    	pidRequestedValue = map(armValue,0,100,0,-1200);
     }
 	}
 }
